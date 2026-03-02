@@ -1,43 +1,59 @@
 # Fantasy Football AI Draft Assistant
 
-A RAG (Retrieval-Augmented Generation) powered draft assistant that answers natural language fantasy football questions using real NFL data, expert rankings, and injury reports.
+A hybrid AI draft assistant that combines a RAG (Retrieval-Augmented Generation) knowledge base with an analytics engine to answer natural language fantasy football questions — grounded in real stats, ADP data, and expert analysis.
 
 ## What It Does
 
 Ask questions like:
-
-- "Who should I draft in round 3 if I need a WR?"
+- "Round 4, pick 8 — I have 2 RBs and 1 WR, who should I take?"
+- "Is Ja'Marr Chase worth his ADP this year?"
 - "What are the injury concerns for Saquon Barkley?"
-- "Which rookies have the highest upside this season?"
+- "Who are the best value picks at TE after round 5?"
 
-The system retrieves relevant data from a vector database and generates informed answers with source citations — no hallucination, just data-backed recommendations.
+The system retrieves relevant expert analysis from a vector database and cross-references it with real stats and ADP value calculations — then synthesizes both into an answer with reasoning and source citations.
 
 ## Architecture
 
 ```
-Question → Embed → Vector Search (ChromaDB) → Retrieved Context → LLM (Ollama) → Answer + Sources
+Question + Roster + Drafted Players
+          ↓
+┌─────────┴─────────┐
+│                   │
+RAG Layer       Analytics Engine
+│                   │
+Expert opinions,   Stats, ADP,
+injury context,    value scores,
+news, narratives   positional needs
+│                   │
+└─────────┬─────────┘
+          ↓
+     LLM synthesis
+          ↓
+  Answer + Reasoning + Sources
 ```
 
 ## Tech Stack
 
-- **Python 3.11**
-- **LangChain** — RAG orchestration
-- **ChromaDB** — vector storage
-- **sentence-transformers** — embeddings (all-MiniLM-L6-v2)
-- **Ollama** — local LLM inference
+| Component | Tool |
+|-----------|------|
+| RAG framework | LangChain |
+| Vector database | ChromaDB |
+| Embeddings | sentence-transformers (`all-MiniLM-L6-v2`) |
+| LLM | Groq API (`llama-3.1-70b`) |
+| Player stats | nflreadpy |
+| ADP data | Sleeper API |
+| Testing | pytest |
+| Python version | 3.11 via pyenv |
 
 ## Setup
-
-Requires **Python 3.11** (for nfl_data_py compatibility). Uses [pyenv](https://github.com/pyenv/pyenv) for version management.
 
 ```bash
 # Clone the repo
 git clone https://github.com/mattvanharn/fantasy-draft-rag.git
 cd fantasy-draft-rag
 
-# Set Python 3.11 for this project (pyenv)
-pyenv install 3.11  # if not already installed
-pyenv local 3.11
+# Set Python version (requires pyenv)
+pyenv local 3.11.14
 
 # Create virtual environment
 python -m venv .venv
@@ -46,28 +62,26 @@ source .venv/bin/activate
 # Install dependencies
 pip install -r requirements.txt
 
-# Copy environment config
+# Configure environment
 cp .env.example .env
-```
-
-### Ollama Setup
-
-```bash
-# Install Ollama (Arch Linux)
-sudo pacman -S ollama
-
-# Pull a model
-ollama pull llama3.2:3b
-
-# Verify it works
-ollama run llama3.2:3b "Hello, who are you?"
+# Edit .env and add your GROQ_API_KEY (free at console.groq.com)
 ```
 
 ## Project Status
 
-**Phase 1: RAG Pipeline MVP** — In Progress
+**Phase 1: Hybrid RAG + Analytics Pipeline** — In Progress
 
-See [ROADMAP](docs/ROADMAP.md) for full project plan.
+| Step | Status | Description |
+|------|--------|-------------|
+| 1. Project setup | ✅ Done | Repo, venv, dependencies |
+| 2. Groq LLM setup | ⬜ | Configure LLM via API |
+| 3. Stats data | ⬜ | Collect 2024 player stats |
+| 4. ADP data | ⬜ | Collect ADP and rankings |
+| 5. Document processing | ⬜ | Convert stats to text for RAG |
+| 6. Vector store | ⬜ | Embeddings + ChromaDB |
+| 7. Analytics engine | ⬜ | Value scores, roster logic |
+| 8. End-to-end pipeline | ⬜ | Connect all components |
+| 9. Evaluation & polish | ⬜ | Testing, tuning, docs |
 
 ## License
 
