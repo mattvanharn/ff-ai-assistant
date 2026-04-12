@@ -66,10 +66,8 @@ tmux select-window -t "claude"
 echo
 echo "Layout ready:"
 echo "  Window 1: claude (top = chat, bottom = command shell)"
-echo "  Window 2: editor (single shell pane)"
+echo "  Window 2: editor (single shell pane — open nvim here, then launch Claude from within it)"
 echo "  Open a second terminal and run: tmux attach -t ffai"
-echo "  Keep one terminal on 'claude' and the other on 'editor'"
-echo "  In editor window, open nvim manually: nvim ."
 echo
 echo "To activate venv manually: source .venv/bin/activate"
 echo "Or prefix commands with:   uv run <command>"
